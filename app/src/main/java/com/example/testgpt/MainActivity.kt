@@ -109,6 +109,7 @@ class MainActivity : AppCompatActivity() {
             inputtext?.text = ""
         }
         inputtext?.append((view as Button).text)
+        
         inputtext?.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
                 // Do something before the text is changed
