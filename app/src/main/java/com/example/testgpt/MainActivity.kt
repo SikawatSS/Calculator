@@ -35,12 +35,13 @@ class MainActivity : AppCompatActivity() {
     private var ButtonDel : Button? = null
     private var ButtonDivine : Button? = null
     private var ButtonMulti : Button? = null
+    private var ButtonAc : Button?= null
     private lateinit var gestureDetector: GestureDetectorCompat
     var lastnumber : Boolean = false
     var lastdot : Boolean = false
     var candot : Boolean = false
     var bgcolormode : Boolean = false
-
+    var onclear : Boolean = false
 
 
 
@@ -57,10 +58,13 @@ class MainActivity : AppCompatActivity() {
         ButtonDel = findViewById(R.id.ButtonDel)
         ButtonDivine = findViewById(R.id.ButtonDivine)
         ButtonMulti = findViewById(R.id.ButtonMulti)
+        ButtonAc = findViewById(R.id.ButtonAc)
         inputtext?.visibility = View.VISIBLE
         secondtext?.visibility = View.INVISIBLE
         threetext?.visibility = View.INVISIBLE
         fourtext?.visibility = View.INVISIBLE
+
+
 
 
 
@@ -76,7 +80,7 @@ class MainActivity : AppCompatActivity() {
                     && !inputtext?.text.toString().startsWith(",")
                     && !tvValue.contains("+")  && !tvValue.contains("-")
                     && !tvValue.contains("x") && !tvValue.contains("÷")
-                    && !tvValue.contains(".") ) {
+                    && !tvValue.contains(".") && !tvValue.contains("e") ) {
                     val number = s.toString().replace(",", "").toDouble()
                     val formattedString =
                         if (number > 999999999 && number.toString().length >= 12) {
@@ -150,18 +154,6 @@ class MainActivity : AppCompatActivity() {
                     threetext?.removeTextChangedListener(this)
                     threetext?.setText(formattedString)
                     threetext?.addTextChangedListener(this)
-                    //Log.e("afterplus",threetext?.text.toString())
-//                    val number = s.toString().replace(",", "").toDouble()
-//                    val formattedString = decimalFormat.format(number)
-//                    threetext?.removeTextChangedListener(this)
-//                    threetext?.setText(formattedString)
-//                    threetext?.addTextChangedListener(this)
-//                    if (formattedString.length >= 12){
-//                        threetext?.removeTextChangedListener(this)
-//                        threetext?.setText(formattedString.substring(0,12))
-//                        Log.e("inputtext",threetext?.text.toString())
-//                        threetext?.addTextChangedListener(this)
-//                    }
                 }
 
             }
@@ -254,7 +246,9 @@ class MainActivity : AppCompatActivity() {
             inputtext?.text = ""
             secondtext?.text = ""
         }
-
+            if (!inputtext?.text.toString().isEmpty()) {
+            ButtonAc?.text = "C"
+        }
         lastnumber = true
         lastdot = false
         inputtext?.append((view as Button).text)
@@ -283,7 +277,11 @@ class MainActivity : AppCompatActivity() {
         fourtext?.visibility = View.INVISIBLE
         lastnumber = false
         lastdot = false
+        ButtonAc?.text = "AC"
         ChangeButtonColor()
+
+
+
     }
 
     fun Ondot (view: View){
@@ -418,23 +416,28 @@ class MainActivity : AppCompatActivity() {
                     if (prefix.isNotEmpty()){
                         leftside = prefix + leftside
                     }
-                    if (rightside.toDouble() > 9999999999){
-                        inputtext?.setText("0")
-                    }else{
-                        var result = ((leftside.toDouble() - rightside.toDouble()).toString())
+                    if (rightside.length >= 9) {
+                        var newrightside = rightside.substring(0, 9)
+                        var result = ((leftside.toDouble() - newrightside.toDouble()).toString())
                         inputtext?.text = (deletedotzero(result))
                         secondtext?.setText("")
                         threetext?.setText("")
-
+                        Log.e("from-",inputtext?.text.toString())
                     }
+//                    if (rightside.toDouble() > 9999999999){
+//                        inputtext?.setText("0")
+//                        Log.e("from-",inputtext?.text.toString())
+//                    }
+                    //
 
-                    //inputtext?.text  = removedot((leftside.toDouble() - rightside.toDouble()).toString())
-                    //inputtext?.text  = ((leftside.toDouble() - rightside.toDouble()).toString())
+//                        var result = ((leftside.toDouble() - rightside.toDouble()).toString())
+//                        inputtext?.text = (deletedotzero(result))
+//                        secondtext?.setText("")
+//                        threetext?.setText("")
+//                        Log.e("from-",inputtext?.text.toString())
 
-//                    var result = ((leftside.toDouble() - rightside.toDouble()).toString())
-//                    inputtext?.text = (deletedotzero(result))
-//                    secondtext?.setText("")
-//                    threetext?.setText("")
+
+                   // }
 
                 }
                 if (tvValue.contains("+")){
@@ -444,29 +447,54 @@ class MainActivity : AppCompatActivity() {
                     if (prefix.isNotEmpty()){
                         leftside = prefix + leftside
                     }
-                    var result = ((leftside.toDouble() + rightside.toDouble()).toString())
-                    if (result.toDouble() > 999999999){
-                        //var intresult = result.toInt()
-                        Log.e("Real result",result.toString())
-                        inputtext?.text = ((result)).toString()
-                        secondtext?.setText("")
-                        threetext?.setText("")
+                    if (rightside.length >= 9){
+                        var newrightside = rightside.substring(0,9)
+                        Log.e("newrigthside",newrightside)
+                        var result = ((leftside.toDouble() + newrightside.toDouble()).toString())
+                        var number = (leftside.toDouble() + newrightside.toDouble())
+                        if (result.toDouble() > 999999999){
+                            inputtext?.text = ((result)).toString()
+                            Log.e("from+if",inputtext?.text.toString())
+                            secondtext?.setText("")
+                            threetext?.setText("")
+                            val numberInScientificNotation = String.format("%.0e", number)
+                            Log.e("Scinumber",numberInScientificNotation)
+                            val numberAsString = numberInScientificNotation.toString().replace("+0", "")
+                            inputtext?.text = ((numberInScientificNotation)).toString()
+                            val resultList = mutableListOf<String>()
+                            numberInScientificNotation.split("+").forEach {
+                                resultList.add(it.replace("+", "").replace("0", ""))
+                            }
+                            var result0 = resultList[0].toString()
+                            var result1 = resultList[1].toString()
+                            inputtext?.text = "$result0$result1"
+                        }
+                        else{
+                            inputtext?.text = (deletedotzero(result))
+                            secondtext?.setText("")
+                            threetext?.setText("")
+                            Log.e("from+else",inputtext?.text.toString())
+                            Log.e("resultfour",fourtext?.text.toString())
+                        }
                     }
-                    else{
-                    inputtext?.text = (deletedotzero(result))
-                    secondtext?.setText("")
-                    threetext?.setText("")
-                    Log.e("result",inputtext?.text.toString())
-                    Log.e("resultfour",fourtext?.text.toString())
+                    else {
+                        var newrightside = rightside.substring(0,rightside.length)
+                        Log.e("newrigthside",newrightside)
+                        var result = ((leftside.toDouble() + newrightside.toDouble()).toString())
+                        if (result.toDouble() > 999999999){
+                            inputtext?.text = ((result)).toString()
+                            Log.e("from+if",inputtext?.text.toString())
+                            secondtext?.setText("")
+                            threetext?.setText("")
+                        }
+                        else{
+                            inputtext?.text = (deletedotzero(result))
+                            secondtext?.setText("")
+                            threetext?.setText("")
+                            Log.e("from+else",inputtext?.text.toString())
+                            Log.e("resultfour",fourtext?.text.toString())
+                        }
                     }
-//                    Log.e("Real result",result)
-//                    inputtext?.text = (deletedotzero(result))
-//                    fourtext?.text = (deletedotzero(result))
-//                    secondtext?.setText("")
-//                    threetext?.setText("")
-//                    Log.e("result",inputtext?.text.toString())
-//                    Log.e("resultfour",fourtext?.text.toString())
-
                 }
                 if (tvValue.contains("x")){
                     var  splitValue = tvValue.split("x")
@@ -475,12 +503,64 @@ class MainActivity : AppCompatActivity() {
                     if (prefix.isNotEmpty()){
                         leftside = prefix + leftside
                     }
-                    //inputtext?.text  = removedot((leftside.toDouble() * rightside.toDouble()).toString())
-                    //inputtext?.text  = ((leftside.toDouble() * rightside.toDouble()).toString())
-                    var result = ((leftside.toDouble() * rightside.toDouble()).toString())
-                    inputtext?.text = (deletedotzero(result))
-                    secondtext?.setText("")
-                    threetext?.setText("")
+                    if (rightside.length >= 9){
+                        var newrightside = rightside.substring(0,9)
+                        Log.e("newrigthside",newrightside)
+                        var result = ((leftside.toDouble() * newrightside.toDouble()).toString())
+                        var number = (leftside.toDouble() * newrightside.toDouble())
+                        if (result.toDouble() > 999999999){
+                            inputtext?.text = ((result)).toString()
+                            Log.e("from+if",inputtext?.text.toString())
+                            secondtext?.setText("")
+                            threetext?.setText("")
+                            val numberInScientificNotation = String.format("%.0e", number)
+                            Log.e("Scinumber",numberInScientificNotation)
+                            //inputtext?.text = ((numberInScientificNotation)).toString()
+                            val resultList = mutableListOf<String>()
+                            numberInScientificNotation.split("x").forEach {
+                                resultList.add(it.replace("x", "").replace("0", ""))
+                            }
+                            var result0 = resultList[0].toString()
+                           // var result1 = resultList[1].toString()
+                            inputtext?.text = "$result0"
+                        }
+                        else{
+                            inputtext?.text = (deletedotzero(result))
+                            secondtext?.setText("")
+                            threetext?.setText("")
+                            Log.e("from+else",inputtext?.text.toString())
+                            Log.e("resultfour",fourtext?.text.toString())
+                        }
+                    }
+                    else {
+                        var newrightside = rightside.substring(0,rightside.length)
+                        Log.e("newrigthside",newrightside)
+                        var result = ((leftside.toDouble() * newrightside.toDouble()).toString())
+                        if (result.toDouble() > 999999999){
+                            inputtext?.text = ((result)).toString()
+                            Log.e("from+if",inputtext?.text.toString())
+                            secondtext?.setText("")
+                            threetext?.setText("")
+                        }
+                        else{
+                            inputtext?.text = (deletedotzero(result))
+                            secondtext?.setText("")
+                            threetext?.setText("")
+                            Log.e("from+else",inputtext?.text.toString())
+                            Log.e("resultfour",fourtext?.text.toString())
+                        }
+                    }
+//                    var  splitValue = tvValue.split("x")
+//                    var leftside = splitValue[0]
+//                    var rightside = splitValue[1]
+//                    if (prefix.isNotEmpty()){
+//                        leftside = prefix + leftside
+//                    }
+//                    var result = ((leftside.toDouble() * rightside.toDouble()).toString())
+//                    inputtext?.text = (deletedotzero(result))
+//                    secondtext?.setText("")
+//                    threetext?.setText("")
+//                    Log.e("fromx",inputtext?.text.toString())
 
                 }
                 if (tvValue.contains("÷")){
@@ -490,10 +570,9 @@ class MainActivity : AppCompatActivity() {
                     if (prefix.isNotEmpty()){
                         leftside = prefix + leftside
                     }
-                    //inputtext?.text  = removedot((leftside.toDouble() / rightside.toDouble()).toString())
-                    //inputtext?.text  = ((leftside.toDouble() / rightside.toDouble()).toString())
                     var result = ((leftside.toDouble() / rightside.toDouble()).toString())
                     inputtext?.text = (deletedotzero(result))
+                    Log.e("from/",inputtext?.text.toString())
                     secondtext?.setText("")
                     threetext?.setText("")
 
@@ -506,13 +585,6 @@ class MainActivity : AppCompatActivity() {
                 e.printStackTrace()
             }
         }
-    }
-    fun Double.toExponential(fractionDigits: Int): String {
-        val exponential = String.format("%.${fractionDigits}e", this)
-        val parts = exponential.split("e")
-        val coefficient = parts[0]
-        val exponent = parts[1].toInt()
-        return "$coefficient E${exponent}"
     }
 
     fun deletedotzero(s : String) : String {
