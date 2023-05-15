@@ -14,12 +14,8 @@ import android.view.MotionEvent
 import android.view.View
 import android.widget.Button
 import android.widget.TextView
-import android.widget.Toast
-import androidx.core.content.ContextCompat
 import androidx.core.view.GestureDetectorCompat
-import java.text.DecimalFormat
 import kotlin.math.abs
-import kotlin.math.log
 
 
 class MainActivity : AppCompatActivity() {
@@ -30,8 +26,16 @@ class MainActivity : AppCompatActivity() {
     private var ButtonMulti : Button? = null
     private lateinit var gestureDetector: GestureDetectorCompat
     var lastnumber : Boolean = false
-    var lastdot : Boolean = false
-    var bgcolormode : Boolean = false
+
+    //การตั้งชื่อตัวแปร ต้องเป็น camel case
+    private var lastDot : Boolean = false
+
+//    var lastdot : Boolean = false
+
+    private var bgColorMode : Boolean = false
+
+//    private var bgcolormode : Boolean = false
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -103,14 +107,16 @@ class MainActivity : AppCompatActivity() {
         return super.onTouchEvent(event)
     }
 
-    fun Onnumber(view: View){
+
+    //ชื่อ function ต้องเป็น camel case
+    fun onNumber(view: View){
         val zero = inputtext?.text.toString()
         if (zero == "0"){
             inputtext?.text = ""
         }
         inputtext?.append((view as Button).text)
 
-        
+
         inputtext?.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
                 // Do something before the text is changed
@@ -146,11 +152,11 @@ class MainActivity : AppCompatActivity() {
 //            textView.text = text.substring(0, text.length - 1)
 //        }
         lastnumber = true
-        lastdot = false
+        lastDot = false
         Resize()
     }
 
-    fun Onclear(view: View){
+    fun onClear(view: View){
         inputtext?.text = "0"
         inputtext?.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 60f)
         ChangeButtonColor()
@@ -159,10 +165,10 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun Ondot (view: View){
-        if (lastnumber && !lastdot){
+        if (lastnumber && !lastDot){
         inputtext?.append(".")
             lastnumber = false
-            lastdot = true
+            lastDot = true
         }
     }
 
@@ -181,10 +187,10 @@ class MainActivity : AppCompatActivity() {
             if (lastnumber && !checkOperator(it.toString())){
                 inputtext?.append((view as Button).text)
                 lastnumber = false
-                lastdot = false
-                if (!bgcolormode){
+                lastDot = false
+                if (!bgColorMode){
                     view.backgroundTintList = ColorStateList.valueOf(Color.parseColor("#BABABA"))
-                    bgcolormode = true
+                    bgColorMode = true
                    }
                 }
         }
@@ -194,7 +200,7 @@ class MainActivity : AppCompatActivity() {
         ButtonDel?.backgroundTintList = ColorStateList.valueOf(Color.parseColor("#ff8000"))
         ButtonMulti?.backgroundTintList = ColorStateList.valueOf(Color.parseColor("#ff8000"))
         ButtonDivine?.backgroundTintList = ColorStateList.valueOf(Color.parseColor("#ff8000"))
-        bgcolormode = false
+        bgColorMode = false
     }
     fun RemoveComma(){
         val text = inputtext?.text.toString()
