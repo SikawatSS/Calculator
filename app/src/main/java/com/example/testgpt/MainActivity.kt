@@ -423,6 +423,9 @@ class MainActivity : AppCompatActivity() {
                         secondtext?.setText("")
                         threetext?.setText("")
                         Log.e("from-",inputtext?.text.toString())
+                    }else{
+                        var result = ((leftside.toDouble() - rightside.toDouble()).toString())
+                        inputtext?.text = (deletedotzero(result))
                     }
 //                    if (rightside.toDouble() > 9999999999){
 //                        inputtext?.setText("0")
