@@ -4,10 +4,8 @@ package com.example.testgpt
 import android.annotation.SuppressLint
 import android.content.res.ColorStateList
 import android.graphics.Color
-import android.icu.text.NumberFormat
 import android.os.Bundle
 import android.text.Editable
-import android.text.InputFilter
 import android.text.TextWatcher
 import android.util.Log
 import android.util.TypedValue
@@ -15,33 +13,29 @@ import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.View
 import android.widget.Button
-import android.widget.EditText
 import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GestureDetectorCompat
 import java.text.DecimalFormat
-import java.util.Locale
 import kotlin.math.abs
-import kotlin.math.log
 
 
 class MainActivity : AppCompatActivity() {
-    private var inputtext : TextView? = null
-    private var secondtext : TextView? = null
-    private var threetext : TextView? = null
-    private var fourtext : TextView? = null
-    private var ButtonPlus : Button? = null
-    private var ButtonDel : Button? = null
-    private var ButtonDivine : Button? = null
-    private var ButtonMulti : Button? = null
-    private var ButtonAc : Button?= null
+    private var inputAndResultTextView : TextView? = null
+    private var secondTextView : TextView? = null
+    private var thirdTextView : TextView? = null
+    private var fourTextView : TextView? = null
+    private var buttonPlus : Button? = null
+    private var buttonMinus : Button? = null
+    private var buttonDivine : Button? = null
+    private var buttonMulti : Button? = null
+    private var buttonClear : Button?= null
     private lateinit var gestureDetector: GestureDetectorCompat
-    var lastnumber : Boolean = false
-    var lastdot : Boolean = false
-    var candot : Boolean = false
-    var bgcolormode : Boolean = false
-    var onclear : Boolean = false
+    var lastNumber : Boolean = false
+    var lastDot : Boolean = false
+    var checkCanUseDot : Boolean = false
+    var bgColorMode : Boolean = false
+    var onClear : Boolean = false
 
 
 
@@ -50,34 +44,34 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.calculatorconst)
         supportActionBar?.hide()
-        inputtext = findViewById<TextView>(R.id.inputtext)
-        secondtext = findViewById<TextView>(R.id.secondtext)
-        threetext = findViewById<TextView>(R.id.threetext)
-        fourtext = findViewById<TextView>(R.id.fourtext)
-        ButtonPlus = findViewById(R.id.ButtonPlus)
-        ButtonDel = findViewById(R.id.ButtonDel)
-        ButtonDivine = findViewById(R.id.ButtonDivine)
-        ButtonMulti = findViewById(R.id.ButtonMulti)
-        ButtonAc = findViewById(R.id.ButtonAc)
-        inputtext?.visibility = View.VISIBLE
-        secondtext?.visibility = View.INVISIBLE
-        threetext?.visibility = View.INVISIBLE
-        fourtext?.visibility = View.INVISIBLE
+        inputAndResultTextView = findViewById<TextView>(R.id.inputtext)
+        secondTextView = findViewById<TextView>(R.id.secondtext)
+        thirdTextView = findViewById<TextView>(R.id.threetext)
+        fourTextView = findViewById<TextView>(R.id.fourtext)
+        buttonPlus = findViewById(R.id.ButtonPlus)
+        buttonMinus = findViewById(R.id.ButtonDel)
+        buttonDivine = findViewById(R.id.ButtonDivine)
+        buttonMulti = findViewById(R.id.ButtonMulti)
+        buttonClear = findViewById(R.id.ButtonAc)
+        inputAndResultTextView?.visibility = View.VISIBLE
+        secondTextView?.visibility = View.INVISIBLE
+        thirdTextView?.visibility = View.INVISIBLE
+        fourTextView?.visibility = View.INVISIBLE
 
 
 
 
 
-        inputtext?.addTextChangedListener(object : TextWatcher {
+        inputAndResultTextView?.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
             }
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 val decimalFormat = DecimalFormat("#,###")
-                var tvValue = inputtext?.text.toString()
+                var tvValue = inputAndResultTextView?.text.toString()
                 var numberS = s.toString()
-                if (inputtext?.text.toString().isNotEmpty() && !inputtext?.text.toString().startsWith(".")
-                    && !inputtext?.text.toString().startsWith(",")
+                if (inputAndResultTextView?.text.toString().isNotEmpty() && !inputAndResultTextView?.text.toString().startsWith(".")
+                    && !inputAndResultTextView?.text.toString().startsWith(",")
                     && !tvValue.contains("+")  && !tvValue.contains("-")
                     && !tvValue.contains("x") && !tvValue.contains("÷")
                     && !tvValue.contains(".") && !tvValue.contains("e") ) {
@@ -88,31 +82,27 @@ class MainActivity : AppCompatActivity() {
                         } else {
                         decimalFormat.format(number)
                     }
-                    inputtext?.removeTextChangedListener(this)
-                    inputtext?.setText(formattedString)
-                    inputtext?.addTextChangedListener(this)
-                    Log.e("beforeplus",inputtext?.text.toString())
+                    inputAndResultTextView?.removeTextChangedListener(this)
+                    inputAndResultTextView?.setText(formattedString)
+                    inputAndResultTextView?.addTextChangedListener(this)
+                    Log.e("beforeplus",inputAndResultTextView?.text.toString())
 
                 }
-//                else if (numberS){
-//
-//                }
-
             }
 
             override fun afterTextChanged(s: Editable?) {
             }
         })
-        secondtext?.addTextChangedListener(object : TextWatcher {
+        secondTextView?.addTextChangedListener(object : TextWatcher {
 
 
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
             }
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 val decimalFormat = DecimalFormat("#,###")
-                var tvValue = secondtext?.text.toString()
-                if (secondtext?.text.toString().isNotEmpty() && !secondtext?.text.toString().startsWith(".")
-                    && !secondtext?.text.toString().startsWith(",")
+                var tvValue = secondTextView?.text.toString()
+                if (secondTextView?.text.toString().isNotEmpty() && !secondTextView?.text.toString().startsWith(".")
+                    && !secondTextView?.text.toString().startsWith(",")
                     && !tvValue.contains("+")  && !tvValue.contains("-")
                     && !tvValue.contains("x") && !tvValue.contains("÷")
                     && !tvValue.contains(".")) {
@@ -123,9 +113,9 @@ class MainActivity : AppCompatActivity() {
                     } else {
                         decimalFormat.format(number)
                     }
-                    secondtext?.removeTextChangedListener(this)
-                    secondtext?.setText(formattedString)
-                    secondtext?.addTextChangedListener(this)
+                    secondTextView?.removeTextChangedListener(this)
+                    secondTextView?.setText(formattedString)
+                    secondTextView?.addTextChangedListener(this)
                     //Log.e("afterplus",secondtext?.text.toString())
                 }
 
@@ -134,14 +124,14 @@ class MainActivity : AppCompatActivity() {
             }
         })
 
-        threetext?.addTextChangedListener(object : TextWatcher {
+        thirdTextView?.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
             }
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 val decimalFormat = DecimalFormat("#,###")
-                var tvValue = threetext?.text.toString()
-                if (threetext?.text.toString().isNotEmpty() && !threetext?.text.toString().startsWith(".")
-                    && !threetext?.text.toString().startsWith(",")
+                var tvValue = thirdTextView?.text.toString()
+                if (thirdTextView?.text.toString().isNotEmpty() && !thirdTextView?.text.toString().startsWith(".")
+                    && !thirdTextView?.text.toString().startsWith(",")
                     && !tvValue.contains("+")  && !tvValue.contains("-")
                     && !tvValue.contains("x") && !tvValue.contains("÷")
                     && !tvValue.contains(".")) {
@@ -151,9 +141,9 @@ class MainActivity : AppCompatActivity() {
                     } else {
                         decimalFormat.format(number)
                     }
-                    threetext?.removeTextChangedListener(this)
-                    threetext?.setText(formattedString)
-                    threetext?.addTextChangedListener(this)
+                    thirdTextView?.removeTextChangedListener(this)
+                    thirdTextView?.setText(formattedString)
+                    thirdTextView?.addTextChangedListener(this)
                 }
 
             }
@@ -168,22 +158,22 @@ class MainActivity : AppCompatActivity() {
                 if (abs(deltaX) > abs(deltaY)) {
                     // Horizontal swipe detected
                     if (deltaX > 0 ) {
-                        RemoveComma()
-                        var input = inputtext?.text.toString()
+                        removeComma()
+                        var input = inputAndResultTextView?.text.toString()
                         var length = input.length
                         if (input.length != 0){
-                            inputtext?.text = input.substring(0,input.length-1)
-                            var text = inputtext?.text.toString()
+                            inputAndResultTextView?.text = input.substring(0,input.length-1)
+                            var text = inputAndResultTextView?.text.toString()
                             if (text.contains("+") || text.contains("-")
                                 || text.contains("x") || text.contains("÷")){
                                 val parts = text.split("+","-","x","÷")
                                 if (parts.size == 2) {
                                     val secondNumber = parts[1].trim()
                                     if (secondNumber.isEmpty()){
-                                        inputtext?.append("0")
+                                        inputAndResultTextView?.append("0")
                                     }
-                                    threetext?.text = secondNumber
-                                    threetext?.visibility = View.VISIBLE
+                                    thirdTextView?.text = secondNumber
+                                    thirdTextView?.visibility = View.VISIBLE
                                 }
                             }
 
@@ -191,22 +181,22 @@ class MainActivity : AppCompatActivity() {
                         }
                     } else {
                         // Swipe left detected
-                        RemoveComma()
-                        var input = inputtext?.text.toString()
+                        removeComma()
+                        var input = inputAndResultTextView?.text.toString()
                         var length = input.length
                         if (input.length != 0){
-                            inputtext?.setText(input.substring(0,input.length-1))
-                            var text = inputtext?.text.toString()
+                            inputAndResultTextView?.setText(input.substring(0,input.length-1))
+                            var text = inputAndResultTextView?.text.toString()
                             if (text.contains("+") || text.contains("-")
                                 || text.contains("x") || text.contains("÷")){
                                 val parts = text.split("+","-","x","÷")
                                 if (parts.size == 2) {
                                     val secondNumber = parts[1].trim()
                                     if (secondNumber.isEmpty()){
-                                        inputtext?.append("0")
+                                        inputAndResultTextView?.append("0")
                                     }
-                                    threetext?.text = secondNumber
-                                    threetext?.visibility = View.VISIBLE
+                                    thirdTextView?.text = secondNumber
+                                    thirdTextView?.visibility = View.VISIBLE
                                 }
                             }
                         }
@@ -223,14 +213,14 @@ class MainActivity : AppCompatActivity() {
             }
         })
     }
-    fun Resize(){
-        var text = inputtext?.text.toString()
+    fun changeTextSize(){
+        var text = inputAndResultTextView?.text.toString()
         var length = text.length
         Log.e("length",length.toString())
         if (length == 6){
-            inputtext?.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 50f)
-            secondtext?.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 50f)
-            threetext?.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 50f)
+            inputAndResultTextView?.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 50f)
+            secondTextView?.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 50f)
+            thirdTextView?.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 50f)
         }
     }
 
@@ -240,67 +230,67 @@ class MainActivity : AppCompatActivity() {
         return super.onTouchEvent(event)
     }
 
-    fun Onnumber(view: View){
-        val zero = inputtext?.text.toString()
+    fun numberOnclick(view: View){
+        val zero = inputAndResultTextView?.text.toString()
         if (zero == "0"){
-            inputtext?.text = ""
-            secondtext?.text = ""
+            inputAndResultTextView?.text = ""
+            secondTextView?.text = ""
         }
-            if (!inputtext?.text.toString().isEmpty()) {
-            ButtonAc?.text = "C"
+            if (!inputAndResultTextView?.text.toString().isEmpty()) {
+            buttonClear?.text = "C"
         }
-        lastnumber = true
-        lastdot = false
-        inputtext?.append((view as Button).text)
-        Resize()
+        lastNumber = true
+        lastDot = false
+        inputAndResultTextView?.append((view as Button).text)
+        changeTextSize()
         if (zero.contains("+") || zero.contains("-")
             || zero.contains("x") || zero.contains("÷")){
-            threetext?.append((view as Button).text)
-            inputtext?.visibility = View.INVISIBLE
-            secondtext?.visibility = View.INVISIBLE
-            threetext?.visibility = View.VISIBLE
+            thirdTextView?.append((view as Button).text)
+            inputAndResultTextView?.visibility = View.INVISIBLE
+            secondTextView?.visibility = View.INVISIBLE
+            thirdTextView?.visibility = View.VISIBLE
         }
     }
 
-    fun Onclear(view: View){
-        inputtext?.text = "0"
-        inputtext?.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 60f)
-        secondtext?.text = "0"
-        secondtext?.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 60f)
-        threetext?.text = "0"
-        threetext?.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 60f)
-        fourtext?.text = "0"
-        fourtext?.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 60f)
-        inputtext?.visibility = View.VISIBLE
-        secondtext?.visibility = View.INVISIBLE
-        threetext?.visibility = View.INVISIBLE
-        fourtext?.visibility = View.INVISIBLE
-        lastnumber = false
-        lastdot = false
-        ButtonAc?.text = "AC"
-        ChangeButtonColor()
+    fun onClear(view: View){
+        inputAndResultTextView?.text = "0"
+        inputAndResultTextView?.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 60f)
+        secondTextView?.text = "0"
+        secondTextView?.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 60f)
+        thirdTextView?.text = "0"
+        thirdTextView?.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 60f)
+        fourTextView?.text = "0"
+        fourTextView?.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 60f)
+        inputAndResultTextView?.visibility = View.VISIBLE
+        secondTextView?.visibility = View.INVISIBLE
+        thirdTextView?.visibility = View.INVISIBLE
+        fourTextView?.visibility = View.INVISIBLE
+        lastNumber = false
+        lastDot = false
+        buttonClear?.text = "AC"
+        changeButtonColor()
 
 
 
     }
 
     fun Ondot (view: View){
-        if (lastnumber && !lastdot){
-        inputtext?.append(".")
-            threetext?.append(".")
-            lastnumber = false
-            lastdot = true
+        if (lastNumber && !lastDot){
+        inputAndResultTextView?.append(".")
+            thirdTextView?.append(".")
+            lastNumber = false
+            lastDot = true
         }
     }
 
-    fun Onpercent(view: View){
-        var input = inputtext?.text.toString()
+    fun changeValuetoPercent(view: View){
+        var input = inputAndResultTextView?.text.toString()
         val number = input.toString().replace(",", "").toDouble()
-        inputtext?.text = removedot((number / 100).toString())
+        inputAndResultTextView?.text = removeDot((number / 100).toString())
     }
 
-    fun OnDelbeforenumber(view: View){
-        var text = inputtext?.text.toString()
+    fun addMinusBeforeNumber(view: View){
+        var text = inputAndResultTextView?.text.toString()
         val number = text.replace(",", "")
         if (number.toDouble() !== 0.0) {
             var newtext = number.toDouble() * -1
@@ -313,96 +303,96 @@ class MainActivity : AppCompatActivity() {
                 val decimalFormat = DecimalFormat("#,###")
                     val number = newcut.toString().replace(",", "").toDouble()
                     val formattedString = decimalFormat.format(number)
-                inputtext?.text = formattedString
+                inputAndResultTextView?.text = formattedString
             }
             else{
-                inputtext?.text = newtext.toString()
+                inputAndResultTextView?.text = newtext.toString()
             }
         }else{
             var newtext = 0 * -1
-            inputtext?.text = newtext.toString()
+            inputAndResultTextView?.text = newtext.toString()
         }
     }
 
-    fun OnOperator (view: View){
-        secondtext?.setText("")
-        threetext?.setText("")
-        inputtext?.text.let {
-            if (lastnumber && !checkOperator(it.toString())){
-                inputtext?.append((view as Button).text)
-                lastnumber = false
-                lastdot = false
-                if (!bgcolormode){
+    fun operatorOnclick (view: View){
+        secondTextView?.setText("")
+        thirdTextView?.setText("")
+        inputAndResultTextView?.text.let {
+            if (lastNumber && !checkOperator(it.toString())){
+                inputAndResultTextView?.append((view as Button).text)
+                lastNumber = false
+                lastDot = false
+                if (!bgColorMode){
                     view.backgroundTintList = ColorStateList.valueOf(Color.parseColor("#BABABA"))
-                    bgcolormode = true
+                    bgColorMode = true
                    }
-                secondtext?.visibility = View.INVISIBLE
-                inputtext?.visibility = View.INVISIBLE
-                threetext?.visibility = View.INVISIBLE
-                    var textbeforeoperation = inputtext?.text.toString()
+                secondTextView?.visibility = View.INVISIBLE
+                inputAndResultTextView?.visibility = View.INVISIBLE
+                thirdTextView?.visibility = View.INVISIBLE
+                    var textbeforeoperation = inputAndResultTextView?.text.toString()
                 if (textbeforeoperation.contains("+") ){
-                    secondtext?.text = textbeforeoperation.substringBeforeLast('+')
-                    secondtext?.visibility = View.VISIBLE
+                    secondTextView?.text = textbeforeoperation.substringBeforeLast('+')
+                    secondTextView?.visibility = View.VISIBLE
                 }
                 if (textbeforeoperation.contains("-")){
-                    secondtext?.text = textbeforeoperation.substringBeforeLast('-')
-                    secondtext?.visibility = View.VISIBLE
+                    secondTextView?.text = textbeforeoperation.substringBeforeLast('-')
+                    secondTextView?.visibility = View.VISIBLE
                 }
                 if (textbeforeoperation.contains("x")){
-                    secondtext?.text = textbeforeoperation.substringBeforeLast('x')
-                    secondtext?.visibility = View.VISIBLE
+                    secondTextView?.text = textbeforeoperation.substringBeforeLast('x')
+                    secondTextView?.visibility = View.VISIBLE
                 }
                 if (textbeforeoperation.contains("÷")){
-                    secondtext?.text = textbeforeoperation.substringBeforeLast('÷')
-                    secondtext?.visibility = View.VISIBLE
+                    secondTextView?.text = textbeforeoperation.substringBeforeLast('÷')
+                    secondTextView?.visibility = View.VISIBLE
                 }
                 if (textbeforeoperation.startsWith("-") && textbeforeoperation.endsWith("+")){
-                    secondtext?.text = textbeforeoperation.substringBeforeLast('+')
-                    secondtext?.visibility = View.VISIBLE
+                    secondTextView?.text = textbeforeoperation.substringBeforeLast('+')
+                    secondTextView?.visibility = View.VISIBLE
                 }
                 if (textbeforeoperation.startsWith("-")&& textbeforeoperation.endsWith("-")){
-                    secondtext?.text = textbeforeoperation.substringBeforeLast('-')
-                    secondtext?.visibility = View.VISIBLE
+                    secondTextView?.text = textbeforeoperation.substringBeforeLast('-')
+                    secondTextView?.visibility = View.VISIBLE
                 }
                 if (textbeforeoperation.startsWith("-")&& textbeforeoperation.endsWith("x")){
-                    secondtext?.text = textbeforeoperation.substringBeforeLast('x')
-                    secondtext?.visibility = View.VISIBLE
+                    secondTextView?.text = textbeforeoperation.substringBeforeLast('x')
+                    secondTextView?.visibility = View.VISIBLE
                 }
                 if (textbeforeoperation.startsWith("-")&& textbeforeoperation.endsWith("÷")){
-                    secondtext?.text = textbeforeoperation.substringBeforeLast('÷')
-                    secondtext?.visibility = View.VISIBLE
+                    secondTextView?.text = textbeforeoperation.substringBeforeLast('÷')
+                    secondTextView?.visibility = View.VISIBLE
                 }
-                var textbeforeoperationfrom3 = threetext?.text.toString()
+                var textbeforeoperationfrom3 = thirdTextView?.text.toString()
                 if (textbeforeoperationfrom3.endsWith("x")){
-                    secondtext?.text = textbeforeoperationfrom3.substringBeforeLast('x')
-                    secondtext?.visibility = View.VISIBLE
+                    secondTextView?.text = textbeforeoperationfrom3.substringBeforeLast('x')
+                    secondTextView?.visibility = View.VISIBLE
                 }
-                candot = true
+                checkCanUseDot = true
                 }
         }
     }
-    fun ChangeButtonColor(){
-        ButtonPlus?.backgroundTintList = ColorStateList.valueOf(Color.parseColor("#ff8000"))
-        ButtonDel?.backgroundTintList = ColorStateList.valueOf(Color.parseColor("#ff8000"))
-        ButtonMulti?.backgroundTintList = ColorStateList.valueOf(Color.parseColor("#ff8000"))
-        ButtonDivine?.backgroundTintList = ColorStateList.valueOf(Color.parseColor("#ff8000"))
-        bgcolormode = false
+    fun changeButtonColor(){
+        buttonPlus?.backgroundTintList = ColorStateList.valueOf(Color.parseColor("#ff8000"))
+        buttonMinus?.backgroundTintList = ColorStateList.valueOf(Color.parseColor("#ff8000"))
+        buttonMulti?.backgroundTintList = ColorStateList.valueOf(Color.parseColor("#ff8000"))
+        buttonDivine?.backgroundTintList = ColorStateList.valueOf(Color.parseColor("#ff8000"))
+        bgColorMode = false
     }
-    fun RemoveComma(){
-        val text = inputtext?.text.toString()
+    fun removeComma(){
+        val text = inputAndResultTextView?.text.toString()
         val textwithoutcomma = text.replace(",","")
-        inputtext?.text = textwithoutcomma
+        inputAndResultTextView?.text = textwithoutcomma
     }
     fun onEqual(view: View){
-        secondtext?.setText("")
-        threetext?.setText("")
-        threetext?.visibility = View.INVISIBLE
-        secondtext?.visibility = View.INVISIBLE
-        inputtext?.visibility = View.VISIBLE
-        if (lastnumber ){
-            ChangeButtonColor()
-            RemoveComma()
-            var tvValue = inputtext?.text.toString()
+        secondTextView?.setText("")
+        thirdTextView?.setText("")
+        thirdTextView?.visibility = View.INVISIBLE
+        secondTextView?.visibility = View.INVISIBLE
+        inputAndResultTextView?.visibility = View.VISIBLE
+        if (lastNumber ){
+            changeButtonColor()
+            removeComma()
+            var tvValue = inputAndResultTextView?.text.toString()
             var prefix = ""
             try {
                 if (tvValue.startsWith("-")){
@@ -419,13 +409,13 @@ class MainActivity : AppCompatActivity() {
                     if (rightside.length >= 9) {
                         var newrightside = rightside.substring(0, 9)
                         var result = ((leftside.toDouble() - newrightside.toDouble()).toString())
-                        inputtext?.text = (deletedotzero(result))
-                        secondtext?.setText("")
-                        threetext?.setText("")
-                        Log.e("from-",inputtext?.text.toString())
+                        inputAndResultTextView?.text = (deleteDotZero(result))
+                        secondTextView?.setText("")
+                        thirdTextView?.setText("")
+                        Log.e("from-",inputAndResultTextView?.text.toString())
                     }else{
                         var result = ((leftside.toDouble() - rightside.toDouble()).toString())
-                        inputtext?.text = (deletedotzero(result))
+                        inputAndResultTextView?.text = (deleteDotZero(result))
                     }
 //                    if (rightside.toDouble() > 9999999999){
 //                        inputtext?.setText("0")
@@ -456,28 +446,28 @@ class MainActivity : AppCompatActivity() {
                         var result = ((leftside.toDouble() + newrightside.toDouble()).toString())
                         var number = (leftside.toDouble() + newrightside.toDouble())
                         if (result.toDouble() > 999999999){
-                            inputtext?.text = ((result)).toString()
-                            Log.e("from+if",inputtext?.text.toString())
-                            secondtext?.setText("")
-                            threetext?.setText("")
+                            inputAndResultTextView?.text = ((result)).toString()
+                            Log.e("from+if",inputAndResultTextView?.text.toString())
+                            secondTextView?.setText("")
+                            thirdTextView?.setText("")
                             val numberInScientificNotation = String.format("%.0e", number)
                             Log.e("Scinumber",numberInScientificNotation)
                             val numberAsString = numberInScientificNotation.toString().replace("+0", "")
-                            inputtext?.text = ((numberInScientificNotation)).toString()
+                            inputAndResultTextView?.text = ((numberInScientificNotation)).toString()
                             val resultList = mutableListOf<String>()
                             numberInScientificNotation.split("+").forEach {
                                 resultList.add(it.replace("+", "").replace("0", ""))
                             }
                             var result0 = resultList[0].toString()
                             var result1 = resultList[1].toString()
-                            inputtext?.text = "$result0$result1"
+                            inputAndResultTextView?.text = "$result0$result1"
                         }
                         else{
-                            inputtext?.text = (deletedotzero(result))
-                            secondtext?.setText("")
-                            threetext?.setText("")
-                            Log.e("from+else",inputtext?.text.toString())
-                            Log.e("resultfour",fourtext?.text.toString())
+                            inputAndResultTextView?.text = (deleteDotZero(result))
+                            secondTextView?.setText("")
+                            thirdTextView?.setText("")
+                            Log.e("from+else",inputAndResultTextView?.text.toString())
+                            Log.e("resultfour",fourTextView?.text.toString())
                         }
                     }
                     else {
@@ -485,17 +475,17 @@ class MainActivity : AppCompatActivity() {
                         Log.e("newrigthside",newrightside)
                         var result = ((leftside.toDouble() + newrightside.toDouble()).toString())
                         if (result.toDouble() > 999999999){
-                            inputtext?.text = ((result)).toString()
-                            Log.e("from+if",inputtext?.text.toString())
-                            secondtext?.setText("")
-                            threetext?.setText("")
+                            inputAndResultTextView?.text = ((result)).toString()
+                            Log.e("from+if",inputAndResultTextView?.text.toString())
+                            secondTextView?.setText("")
+                            thirdTextView?.setText("")
                         }
                         else{
-                            inputtext?.text = (deletedotzero(result))
-                            secondtext?.setText("")
-                            threetext?.setText("")
-                            Log.e("from+else",inputtext?.text.toString())
-                            Log.e("resultfour",fourtext?.text.toString())
+                            inputAndResultTextView?.text = (deleteDotZero(result))
+                            secondTextView?.setText("")
+                            thirdTextView?.setText("")
+                            Log.e("from+else",inputAndResultTextView?.text.toString())
+                            Log.e("resultfour",fourTextView?.text.toString())
                         }
                     }
                 }
@@ -512,10 +502,10 @@ class MainActivity : AppCompatActivity() {
                         var result = ((leftside.toDouble() * newrightside.toDouble()).toString())
                         var number = (leftside.toDouble() * newrightside.toDouble())
                         if (result.toDouble() > 999999999){
-                            inputtext?.text = ((result)).toString()
-                            Log.e("from+if",inputtext?.text.toString())
-                            secondtext?.setText("")
-                            threetext?.setText("")
+                            inputAndResultTextView?.text = ((result)).toString()
+                            Log.e("from+if",inputAndResultTextView?.text.toString())
+                            secondTextView?.setText("")
+                            thirdTextView?.setText("")
                             val numberInScientificNotation = String.format("%.0e", number)
                             Log.e("Scinumber",numberInScientificNotation)
                             //inputtext?.text = ((numberInScientificNotation)).toString()
@@ -525,14 +515,14 @@ class MainActivity : AppCompatActivity() {
                             }
                             var result0 = resultList[0].toString()
                            // var result1 = resultList[1].toString()
-                            inputtext?.text = "$result0"
+                            inputAndResultTextView?.text = "$result0"
                         }
                         else{
-                            inputtext?.text = (deletedotzero(result))
-                            secondtext?.setText("")
-                            threetext?.setText("")
-                            Log.e("from+else",inputtext?.text.toString())
-                            Log.e("resultfour",fourtext?.text.toString())
+                            inputAndResultTextView?.text = (deleteDotZero(result))
+                            secondTextView?.setText("")
+                            thirdTextView?.setText("")
+                            Log.e("from+else",inputAndResultTextView?.text.toString())
+                            Log.e("resultfour",fourTextView?.text.toString())
                         }
                     }
                     else {
@@ -540,17 +530,17 @@ class MainActivity : AppCompatActivity() {
                         Log.e("newrigthside",newrightside)
                         var result = ((leftside.toDouble() * newrightside.toDouble()).toString())
                         if (result.toDouble() > 999999999){
-                            inputtext?.text = ((result)).toString()
-                            Log.e("from+if",inputtext?.text.toString())
-                            secondtext?.setText("")
-                            threetext?.setText("")
+                            inputAndResultTextView?.text = ((result)).toString()
+                            Log.e("from+if",inputAndResultTextView?.text.toString())
+                            secondTextView?.setText("")
+                            thirdTextView?.setText("")
                         }
                         else{
-                            inputtext?.text = (deletedotzero(result))
-                            secondtext?.setText("")
-                            threetext?.setText("")
-                            Log.e("from+else",inputtext?.text.toString())
-                            Log.e("resultfour",fourtext?.text.toString())
+                            inputAndResultTextView?.text = (deleteDotZero(result))
+                            secondTextView?.setText("")
+                            thirdTextView?.setText("")
+                            Log.e("from+else",inputAndResultTextView?.text.toString())
+                            Log.e("resultfour",fourTextView?.text.toString())
                         }
                     }
 //                    var  splitValue = tvValue.split("x")
@@ -574,15 +564,15 @@ class MainActivity : AppCompatActivity() {
                         leftside = prefix + leftside
                     }
                     var result = ((leftside.toDouble() / rightside.toDouble()).toString())
-                    inputtext?.text = (deletedotzero(result))
-                    Log.e("from/",inputtext?.text.toString())
-                    secondtext?.setText("")
-                    threetext?.setText("")
+                    inputAndResultTextView?.text = (deleteDotZero(result))
+                    Log.e("from/",inputAndResultTextView?.text.toString())
+                    secondTextView?.setText("")
+                    thirdTextView?.setText("")
 
                 }
-                secondtext?.visibility = View.INVISIBLE
-                threetext?.visibility = View.INVISIBLE
-                inputtext?.visibility = View.VISIBLE
+                secondTextView?.visibility = View.INVISIBLE
+                thirdTextView?.visibility = View.INVISIBLE
+                inputAndResultTextView?.visibility = View.VISIBLE
 
             }catch (e : ArithmeticException){
                 e.printStackTrace()
@@ -590,7 +580,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    fun deletedotzero(s : String) : String {
+    fun deleteDotZero(s : String) : String {
         var value = s
         val originalText = s // "23232.2423432432432432"
         val originalValue = originalText.toDouble() // 23232.2423432432432432
@@ -604,9 +594,9 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-    fun removedot(string :String): String {
+    fun removeDot(string :String): String {
         var value = string
-        var length = inputtext?.length()
+        var length = inputAndResultTextView?.length()
         if (string.contains(".0")) {
             value = string.substring(0, string.length - 2)
         }
